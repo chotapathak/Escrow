@@ -22,6 +22,8 @@ contract escrow {
   
   // event for notification
   event nofify(string notification);
+  // event for recieve function
+  event AmoutRecieved(address user,uint amount);
 
   enum state{Payment_pending, Delivery_pending, Pending_fund_release, Complete}
   state public status;
@@ -48,11 +50,21 @@ contract escrow {
     fallback()payable external {
     require(msg.sender == buyer,'Only for buyer');
     require(status==state.Payment_pending,'payement is already completed');
-    require(msg.value > deals.total,'amount is less the required amount');
+    require(msg.value >= deals.total,'amount is less the required amount');
     balance = msg.value;
     start = block.timestamp;
     status = state.Delivery_pending;
     emit nofify('buyer has deposited the fund in escrow');
+
+  }
+  receive() external payable{
+    require(msg.sender == seller, 'wait let me inform seller Bhoi');
+    require(status==state.Delivery_pending,'product is not delivered yet');
+    require(msg.value >= deals.total);
+    balance = seller.balance + msg.value;
+    end = block.timestamp;
+    status = state.Complete;
+    emit AmoutRecieved(seller, msg.value);
 
   }
   function escrow_balance() public view returns (uint)

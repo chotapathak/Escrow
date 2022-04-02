@@ -5,9 +5,12 @@ const escrow = artifacts.require("escrow");
  * Ethereum client
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
-contract("escrow", function (/* accounts */) {
+contract("escrow", function ( accounts ) {
   it("should assert true", async function () {
-    await escrow.deployed();
-    return assert.isTrue(true);
+    const [buyer, seller] = accounts;
+    const escrow = await escrow.deployed();
+    // await escrow.deployed();
+    console.log(escrow);
+    // return assert.isTrue(true);
   });
 });
